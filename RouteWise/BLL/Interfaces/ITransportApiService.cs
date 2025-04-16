@@ -1,4 +1,6 @@
-﻿namespace RouteWise.BLL.Interfaces
+﻿using RouteWise.Models.Transport;
+
+namespace RouteWise.BLL.Interfaces
 {
     public interface ITransportApiService
     {
