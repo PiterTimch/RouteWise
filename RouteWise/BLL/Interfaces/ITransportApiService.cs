@@ -1,11 +1,10 @@
-﻿using RouteWise.Models.Transport;
+﻿using RouteWise.Models.TransportRoute;
 
 namespace RouteWise.BLL.Interfaces
 {
     public interface ITransportApiService
     {
-        Task<TransportRoute> GetFastestRouteAsync(string origin, string destination);
-        Task<List<TransportRoute>> GetAllRoutesAsync(string origin, string destination);
-        Task<Transport> GetTransportFromRouteAsync(TransportRoute route);
+        Task<TransportRoute> GetFastestRouteAsync(string origin, string destination, string city);
+        Task<List<TransportRoute>> GetAllRoutesAsync(string origin, string destination, string city);
     }
 }
