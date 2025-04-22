@@ -1,5 +1,5 @@
-﻿using RouteWise.Models.TransportData;
-using System.Text.Json;
+﻿using Newtonsoft.Json;
+using RouteWise.Models.TransportData;
 
 namespace RouteWise.BLL.Data
 {
@@ -16,29 +16,37 @@ namespace RouteWise.BLL.Data
 
         private List<TransportStop> LoadStops(string filePath)
         {
-            var json = File.ReadAllText(filePath);
-            var stops = JsonSerializer.Deserialize<List<TransportStopPreview>>(json);
+            using var reader = new StreamReader(filePath);
+            using var jsonReader = new JsonTextReader(reader);
+            var stopsPreview = JsonSerializer.Create().Deserialize<List<TransportStopPreview>>(jsonReader);
 
             var stopDict = new Dictionary<string, TransportStop>();
 
-            foreach (var stop in stops)
+            // Створюємо базові об'єкти без сусідів
+            foreach (var preview in stopsPreview)
             {
-                stopDict[stop.Name] = new TransportStop
+                stopDict[preview.Name] = new TransportStop
                 {
-                    Name = stop.Name,
+                    Name = preview.Name,
                     Transport = new List<Transport>(),
-                    Next = new List<TransportStop>()
+                    Neighbours = new List<NeighbourStopLink>()
                 };
             }
 
-            foreach (var stop in stops)
+            // Додаємо сусідів з відстанями
+            foreach (var preview in stopsPreview)
             {
-                var currentStop = stopDict[stop.Name];
-                foreach (var neighbour in stop.Neighbours)
+                var currentStop = stopDict[preview.Name];
+
+                foreach (var neighbour in preview.Neighbours)
                 {
                     if (stopDict.TryGetValue(neighbour.Name, out var neighbourStop))
                     {
-                        currentStop.Next.Add(neighbourStop);
+                        currentStop.Neighbours.Add(new NeighbourStopLink
+                        {
+                            Stop = neighbourStop,
+                            Distance = neighbour.Distance
+                        });
                     }
                 }
             }
@@ -48,8 +56,9 @@ namespace RouteWise.BLL.Data
 
         private List<Transport> LoadTransports(string filePath, List<TransportStop> allStops)
         {
-            var json = File.ReadAllText(filePath);
-            var transportPreviews = JsonSerializer.Deserialize<List<TransportPreview>>(json);
+            using var reader = new StreamReader(filePath);
+            using var jsonReader = new JsonTextReader(reader);
+            var transportPreviews = JsonSerializer.Create().Deserialize<List<TransportPreview>>(jsonReader);
 
             var stopDict = allStops.ToDictionary(s => s.Name, s => s);
 

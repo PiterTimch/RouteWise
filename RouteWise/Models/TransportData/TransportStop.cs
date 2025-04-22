@@ -4,6 +4,13 @@
     {
         public string Name { get; set; }
         public List<Transport> Transport { get; set; }
-        public List<TransportStop> Next { get; set; }
+        public List<NeighbourStopLink> Neighbours { get; set; }
     }
+
+    public class NeighbourStopLink
+    {
+        public TransportStop Stop { get; set; }
+        public int Distance { get; set; }
+    }
+
 }

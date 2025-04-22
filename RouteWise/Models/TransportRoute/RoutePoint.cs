@@ -5,5 +5,6 @@
         public string StopName { get; set; }
         public string Transport { get; set; }
         public bool IsTransplantation { get; set; }
+        public bool IsFinish { get; set; }
     }
 }
