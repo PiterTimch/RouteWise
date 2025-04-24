@@ -7,23 +7,12 @@ namespace RouteWise.BLL.Services
     public class RouteGraphService
     {
         private readonly List<TransportStop> _stops;
+        private readonly List<Transport> _transports;
 
-        public RouteGraphService(List<TransportStop> stops)
+        public RouteGraphService(List<TransportStop> stops, List<Transport> transports)
         {
             _stops = stops;
-
-            foreach (var stop in _stops)
-            {
-                foreach (var neighbour in stop.Neighbours)
-                {
-                    var neighbourStop = _stops.FirstOrDefault(s => s.Name == neighbour.Stop.Name);
-                    if (neighbourStop != null)
-                    {
-                        // Додаємо двосторонні зв'язки для кожної зупинки
-                        neighbourStop.Neighbours.Add(new NeighbourStopLink { Stop = stop, Distance = neighbour.Distance });
-                    }
-                }
-            }
+            _transports = transports;
         }
 
 
@@ -78,6 +67,7 @@ namespace RouteWise.BLL.Services
 
             if (start == null || end == null) return null;
 
+            // Алгоритм Дейкстри
             var distances = new Dictionary<TransportStop, int>();
             var previous = new Dictionary<TransportStop, TransportStop>();
             var queue = new PriorityQueue<TransportStop, int>();
@@ -109,6 +99,7 @@ namespace RouteWise.BLL.Services
                 }
             }
 
+            // Відновлення шляху
             var path = new List<TransportStop>();
             var curr = end;
 
@@ -116,13 +107,7 @@ namespace RouteWise.BLL.Services
             {
                 path.Insert(0, curr);
                 curr = previous[curr];
-
-                if (curr == null && path.Count == 1)
-                {
-                    return null;
-                }
             }
-
 
             return path.Count > 0 && path[0] == start ? path : null;
         }

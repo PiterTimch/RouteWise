@@ -20,7 +20,7 @@ namespace RouteWise.BLL.Services
             string transportsPath = Path.Combine(basePath, "BLL", "Data", "Json", "AllTransport.json");
 
             _context = new AppDBContext(stopsPath, transportsPath);
-            _routeService = new RouteGraphService(_context.Stops);
+            _routeService = new RouteGraphService(_context.Stops, _context.Transports);
         }
 
         public async Task<List<TransportRoute>> GetAllRoutesAsync(string origin, string destination)
@@ -107,11 +107,24 @@ namespace RouteWise.BLL.Services
                 });
             }
 
+            int totalDistance = 0;
+            for (int i = 0; i < path.Count - 1; i++)
+            {
+                var current = path[i];
+                var next = path[i + 1];
+                var link = current.Neighbours.FirstOrDefault(n => n.Stop.Name == next.Name);
+
+                if (link != null)
+                {
+                    totalDistance += link.Distance;
+                }
+            }
+
             return new TransportRoute
             {
                 Origin = origin,
                 Destination = destination,
-                Distance = path.Count - 1,
+                Distance = totalDistance,
                 RoutePoints = points
             };
         }
