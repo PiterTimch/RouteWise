@@ -14,8 +14,8 @@ namespace RouteWise.Controllers
         public async Task<IActionResult> GetFastestRoute()
         {
             var route = await service.GetFastestRouteAsync("Міськрада", "Стадіон");
-            var routes = await service.GetAllRoutesAsync("Стадіон", "Міськрада");
-            ViewBag.Route = route;
+            var routes = await service.GetAllRoutesAsync("Міськрада", "Стадіон");
+            ViewBag.Route = route.ToString();
             return View("Index");
         }
     }
