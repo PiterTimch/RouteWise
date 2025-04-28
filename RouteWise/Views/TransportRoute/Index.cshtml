@@ -1,1 +1,42 @@
-﻿<a asp-action="GetFastestRoute">TEST</a>
+﻿@model RouteConfigViewModel
+
+@{
+    ViewBag.Title = "Виберіть маршрут";
+    var stops = ViewBag.Stops as List<string>;
+}
+
+<div style="text-align: center; margin-top: 50px;">
+    <h1>Виберіть маршрут</h1>
+
+    <form asp-action="Index" method="post">
+        <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px;">
+            <div>
+                <label>Звідки:</label><br />
+                @Html.DropDownListFor(m => m.Origin,
+                         new SelectList(stops),
+                         "Оберіть зупинку",
+                         new { @class = "form-control" })
+            </div>
+
+            <div>
+                <label>Куди:</label><br />
+                @Html.DropDownListFor(m => m.Destination,
+                         new SelectList(stops),
+                         "Оберіть зупинку",
+                         new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button type="submit" class="btn btn-primary">Пошук</button>
+        </div>
+    </form>
+
+    @if (ViewBag.Route != null)
+    {
+        <div style="margin-top: 30px;">
+            <h2>Найшвидший маршрут:</h2>
+            <p>@ViewBag.Route</p>
+        </div>
+    }
+</div>
