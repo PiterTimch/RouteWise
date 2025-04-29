@@ -22,7 +22,6 @@ namespace RouteWise.BLL.Data
 
             var stopDict = new Dictionary<string, TransportStop>();
 
-            // Створюємо базові об'єкти без сусідів
             foreach (var preview in stopsPreview)
             {
                 stopDict[preview.Name] = new TransportStop
@@ -33,7 +32,6 @@ namespace RouteWise.BLL.Data
                 };
             }
 
-            // Додаємо сусідів з відстанями
             foreach (var preview in stopsPreview)
             {
                 var currentStop = stopDict[preview.Name];
