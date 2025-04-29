@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Виберіть маршрут";
     var stops = ViewBag.Stops as List<string>;
+    var routes = ViewBag.Routes as List<TransportRoute>;
 }
 
 <div style="text-align: center; margin-top: 50px;">
@@ -13,17 +14,17 @@
             <div>
                 <label>Звідки:</label><br />
                 @Html.DropDownListFor(m => m.Origin,
-                         new SelectList(stops),
-                         "Оберіть зупинку",
-                         new { @class = "form-control" })
+                                  new SelectList(stops),
+                                  "Оберіть зупинку",
+                                  new { @class = "form-control" })
             </div>
 
             <div>
                 <label>Куди:</label><br />
                 @Html.DropDownListFor(m => m.Destination,
-                         new SelectList(stops),
-                         "Оберіть зупинку",
-                         new { @class = "form-control" })
+                                  new SelectList(stops),
+                                  "Оберіть зупинку",
+                                  new { @class = "form-control" })
             </div>
         </div>
 
@@ -32,11 +33,42 @@
         </div>
     </form>
 
-    @if (ViewBag.Route != null)
+    @* @if (ViewBag.Route != null)
     {
         <div style="margin-top: 30px;">
             <h2>Найшвидший маршрут:</h2>
             <p>@ViewBag.Route</p>
         </div>
-    }
+    } *@
+
+    @if (routes != null)
+    {
+        string destination = Model.Destination;
+        string origin = Model.Origin;
+
+        <h2>Шлях @destination - @origin</h2>
+
+        @foreach (var item in routes)
+        {
+            List<string> allTransports = item.RoutePoints
+            .Select(r => r.Transport)
+            .Distinct()
+            .ToList();
+
+            string tInString = "( ";
+
+            foreach (var transport in allTransports)
+            {
+                tInString += transport + " ";
+            }
+
+            tInString += ")";
+
+            <div style="background-color:azure; margin-top: 30px;">
+                <h3>@tInString</h3>
+                <p>@item.ToString()</p>
+            </div>
+        }
+	}
+
 </div>
