@@ -18,46 +18,42 @@ namespace RouteWise.BLL.Services
 
         public List<List<TransportStop>> FindAllRoutes(string origin, string destination)
         {
-            var allRoutes = new List<List<TransportStop>>();
-            var visited = new HashSet<string>();
-            var path = new List<TransportStop>();
             var start = _stops.FirstOrDefault(s => s.Name == origin);
             var end = _stops.FirstOrDefault(s => s.Name == destination);
 
-            if (start == null || end == null) return allRoutes;
+            if (start == null || end == null)
+                return new List<List<TransportStop>>();
 
-            DFS(start, end, visited, path, allRoutes);
-            return allRoutes;
-        }
+            var allRoutes = new List<List<TransportStop>>();
+            var currentPath = new List<TransportStop>();
+            var visited = new HashSet<TransportStop>();
 
-        private void DFS(
-            TransportStop current,
-            TransportStop destination,
-            HashSet<string> visited,
-            List<TransportStop> path,
-            List<List<TransportStop>> allRoutes)
-        {
-            visited.Add(current.Name);
-            path.Add(current);
-
-            if (current == destination)
+            void DFS(TransportStop current)
             {
-                allRoutes.Add(new List<TransportStop>(path));
-            }
-            else
-            {
-                foreach (var neighbourLink in current.Neighbours)
+                visited.Add(current);
+                currentPath.Add(current);
+
+                if (current == end)
                 {
-                    var nextStop = neighbourLink.Stop;
-                    if (!visited.Contains(nextStop.Name))
+                    allRoutes.Add(new List<TransportStop>(currentPath));
+                }
+                else
+                {
+                    foreach (var link in current.Neighbours)
                     {
-                        DFS(nextStop, destination, visited, path, allRoutes);
+                        if (!visited.Contains(link.Stop))
+                        {
+                            DFS(link.Stop);
+                        }
                     }
                 }
+
+                visited.Remove(current);
+                currentPath.RemoveAt(currentPath.Count - 1);
             }
 
-            visited.Remove(current.Name);
-            path.RemoveAt(path.Count - 1);
+            DFS(start);
+            return allRoutes;
         }
 
         public List<TransportStop> FindShortestPath(string origin, string destination)
