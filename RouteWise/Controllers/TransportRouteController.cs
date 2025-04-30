@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RouteWise.BLL.Data;
 using RouteWise.BLL.Interfaces;
+using RouteWise.Models.TransportRoute;
 using RouteWise.Models.ViewModels;
+using RouteWise.Singletone;
 using System.Threading.Tasks;
 
 namespace RouteWise.Controllers
 {
     public class TransportRouteController (ITransportApiService service, AppDBContext context) : Controller
     {
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -37,7 +40,17 @@ namespace RouteWise.Controllers
             var routes = await service.GetAllRoutesAsync(model.Origin, model.Destination);
             ViewBag.Routes = routes;
 
+            Helper.Routes = routes;
+
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult BuildGraph(int id) 
+        {
+            var route = Helper.Routes.FirstOrDefault(r => r.Distance == id);
+
+            return View(route);
         }
     }
 }

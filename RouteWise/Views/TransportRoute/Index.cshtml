@@ -33,14 +33,6 @@
         </div>
     </form>
 
-    @* @if (ViewBag.Route != null)
-    {
-        <div style="margin-top: 30px;">
-            <h2>Найшвидший маршрут:</h2>
-            <p>@ViewBag.Route</p>
-        </div>
-    } *@
-
     @if (routes != null)
     {
         string destination = Model.Destination;
@@ -64,9 +56,11 @@
 
             tInString += ")";
 
-            <div style="background-color:azure; margin-top: 30px;">
-                <h3>@tInString</h3>
-                <p>@item.ToString()</p>
+            <div style="background-color:azure;" class="mt-3 p-2">
+                <a asp-action="BuildGraph" asp-controller="TransportRoute" asp-route-id="@item.Distance" style="text-decoration: none;">
+                    <h3>@tInString</h3>
+                    <p>@item.ToString()</p>
+                </a>
             </div>
         }
 	}

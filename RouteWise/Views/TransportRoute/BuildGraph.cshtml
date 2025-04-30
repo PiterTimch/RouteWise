@@ -1,0 +1,98 @@
+﻿@model TransportRoute
+@{
+    ViewData["Title"] = "Route Graph";
+    var points = Model.RoutePoints;
+    var origin = Model.Origin;
+    var destination = Model.Destination;
+    var canvasWidth = points.Count * 200;
+}
+
+<h2 class="text-center mt-3">@origin → @destination</h2>
+
+<div style="overflow-x: auto; width: 100%; margin: 0 auto;">
+    <canvas id="routeCanvas" width="@canvasWidth" height="250" style="border: 1px solid #ccc; display: block;"></canvas>
+</div>
+<div id="tooltip" style="position: absolute; display: none; padding: 5px 10px; background: white; border: 1px solid gray; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.3); pointer-events: none;"></div>
+
+<div class="mt-4">
+    <a asp-controller="TransportRoute" asp-action="Index" class="btn btn-primary">← Back to Main</a>
+</div>
+
+@section Scripts {
+    <script>
+        const canvas = document.getElementById('routeCanvas');
+        const ctx = canvas.getContext('2d');
+        const tooltip = document.getElementById('tooltip');
+
+        const points = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(points));
+        const radius = 20;
+        const spacing = 200;
+        const startX = 100;
+        const centerY = canvas.height / 2;
+
+        const circles = [];
+
+        let hasFinish = points.some(p => p.IsFinish);
+        if (!hasFinish && points.length > 0) {
+            points[points.length - 1].IsFinish = true;
+        }
+
+        for (let i = 0; i < points.length; i++) {
+            const x = startX + i * spacing;
+            const color = points[i].IsFinish ? 'gold' :
+                          points[i].IsTransplantation ? 'purple' :
+                          'skyblue';
+
+            if (i > 0) {
+                ctx.beginPath();
+                ctx.moveTo(startX + (i - 1) * spacing, centerY);
+                ctx.lineTo(x, centerY);
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+            ctx.arc(x, centerY, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'center';
+            ctx.fillText(points[i].StopName + " " + points[i].Transport, x, centerY + 40);
+
+            circles.push({ x, y: centerY, r: radius, name: points[i].StopName });
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            let found = false;
+
+            for (const c of circles) {
+                const dx = mouseX - c.x;
+                const dy = mouseY - c.y;
+                if (Math.sqrt(dx * dx + dy * dy) <= c.r) {
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${e.pageX + 10}px`;
+                    tooltip.style.top = `${e.pageY + 10}px`;
+                    tooltip.textContent = c.name;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                tooltip.style.display = 'none';
+            }
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+    </script>
+}
