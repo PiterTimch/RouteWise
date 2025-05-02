@@ -26,8 +26,11 @@
 
         const points = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(points));
         const radius = 20;
-        const spacing = 200;
+        const spacing = 250;
         const startX = 100;
+
+        canvas.width = startX * 2 + (points.length - 1) * spacing;
+
         const centerY = canvas.height / 2;
 
         const circles = [];
