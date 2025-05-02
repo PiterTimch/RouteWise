@@ -39,11 +39,6 @@ namespace RouteWise.BLL.Services
                 }
                 else
                 {
-                    if (current.Neighbours.Count == 0)
-                    {
-
-                    }
-
                     foreach (var link in current.Neighbours)
                     {
                         if (!visited.Contains(link.Stop))
