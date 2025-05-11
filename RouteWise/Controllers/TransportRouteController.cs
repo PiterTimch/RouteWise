@@ -37,9 +37,18 @@ namespace RouteWise.Controllers
                 return View(model);
             }
 
-            var routes = await service.GetAllRoutesAsync(model.Origin, model.Destination);
-            ViewBag.Routes = routes;
+            List<TransportRoute> routes = new List<TransportRoute>();
 
+            if (!model.IsFastestRoute)
+            {
+                routes = await service.GetAllRoutesAsync(model.Origin, model.Destination);
+            }
+            else
+            {
+                routes.Add(await service.GetFastestRouteAsync(model.Origin, model.Destination));
+            }
+
+            ViewBag.Routes = routes;
             Helper.Routes = routes;
 
             return View(model);

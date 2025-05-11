@@ -4,5 +4,7 @@
     {
         public string Origin { get; set; }
         public string Destination { get; set; }
+
+        public bool IsFastestRoute { get; set; }
     }
 }
