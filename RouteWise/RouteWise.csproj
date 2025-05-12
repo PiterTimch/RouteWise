@@ -7,21 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="BLL\Data\Json\AllTransport.json" />
-    <Content Remove="BLL\Data\Json\TransportStops.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="BLL\Data\Json\AllTransport.json">
+    <Content Update="BLL\Data\Json\AllTransport.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="BLL\Data\Json\TransportStops.json">
+    </Content>
+    <Content Update="BLL\Data\Json\TransportStops.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
   </ItemGroup>
 
 </Project>
