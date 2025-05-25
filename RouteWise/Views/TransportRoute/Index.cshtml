@@ -48,6 +48,12 @@
 
         @foreach (var item in routes)
         {
+            if (item == null)
+            {
+                <h2>Шлях не знайдено</h2>
+				break;
+            }
+
             List<string> allTransports = item.RoutePoints
             .Select(r => r.Transport)
             .Distinct()
